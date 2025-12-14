@@ -1,4 +1,5 @@
 import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
@@ -6,10 +7,10 @@ export default defineConfig({
     react()
   ],
   output: 'server',
+  adapter: vercel(),
   vite: {
     optimizeDeps: {
       include: ['@masonry-grid/react']
     }
   }
 });
-

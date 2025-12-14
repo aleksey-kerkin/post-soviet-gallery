@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
+    "@astrojs/vercel": "^9.0.2",
     "@masonry-grid/react": "^1.1.1",
     "astro": "^5.16.5",
     "cheerio": "^1.1.2",
