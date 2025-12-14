@@ -43,9 +43,6 @@ Thumbs.db
 *~
 .cursor/
 
-# Data files
-data/images.json
-
 # Documentation
 DEPLOY.md
 
