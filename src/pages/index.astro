@@ -1,0 +1,138 @@
+---
+import ImageGrid from '../components/ImageGrid';
+import '../styles/variables.css';
+import '../styles/typography.css';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Галерея постсоветской фотографии и визуального искусства" />
+    <title>Галерея постсоветской фотографии</title>
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <a href="https://t.me/PostSovietPhotography" target="_blank" rel="noopener" class="title-link">
+          <img src="/logo.jpg" alt="Галерея постсоветской фотографии" class="poster-title" />
+        </a>
+      </div>
+    </header>
+    <main>
+      <ImageGrid client:load />
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(html) {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Скрываем скроллбар, но сохраняем прокрутку */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
+  }
+
+  :global(html)::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-base);
+    overflow-x: hidden;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    /* Скрываем скроллбар, но сохраняем прокрутку */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
+  }
+
+  :global(body)::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  header {
+    grid-column: 1 / -1;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--ctp-surface-0) 0%, var(--ctp-surface-1) 100%);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-primary);
+    margin: 0;
+    position: relative;
+  }
+
+  .header-container {
+    max-width: min(1400px, 100%);
+    margin: 0 auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  .title-link {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .title-link:hover {
+    opacity: 0.9;
+  }
+
+  .title-link:active {
+    opacity: 0.8;
+  }
+
+  .poster-title {
+    margin: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+
+  main {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+    min-height: calc(100vh - 200px);
+    background: var(--bg-base);
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 1440px) {
+    header {
+      padding: 1.5rem 0;
+    }
+    
+    .poster-title {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    header {
+      padding: 1.5rem 0;
+    }
+    
+    .poster-title {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+

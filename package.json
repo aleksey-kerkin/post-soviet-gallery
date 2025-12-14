@@ -1,0 +1,30 @@
+{
+  "name": "telegram-gallery",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync-incremental": "tsx scripts/sync-incremental.ts",
+    "cleanup": "tsx scripts/cleanup-images.ts",
+    "check-broken": "tsx scripts/check-broken-images.ts"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@masonry-grid/react": "^1.1.1",
+    "astro": "^5.16.5",
+    "cheerio": "^1.1.2",
+    "puppeteer": "^24.33.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "telegram": "^2.26.22"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.0",
+    "@types/node": "^25.0.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

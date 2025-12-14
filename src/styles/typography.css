@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Bona+Nova+SC:wght@400;700&display=swap');
+
+:root {
+  /* Font Families - Modern Style */
+  --font-heading-main: 'Bona Nova SC', 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-accent: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Font Sizes - Modern Scale */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 2rem;        /* 32px */
+  --font-size-4xl: 2.5rem;      /* 40px */
+  --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.5rem;      /* 56px */
+
+  /* Line Heights - Optimized for readability */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;
+  --letter-spacing-wider: 0.05em;
+}
+
+/* Base Typography - Modern Style */
+:global(html) {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+:global(body) {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+}
+
+/* Headings - Modern Style */
+:global(h1) {
+  font-family: var(--font-heading-main);
+  font-size: clamp(2rem, 5vw, var(--font-size-5xl));
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+:global(h2),
+:global(h3),
+:global(h4),
+:global(h5),
+:global(h6) {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+:global(h2) {
+  font-size: clamp(1.75rem, 4vw, var(--font-size-4xl));
+  font-weight: 600;
+}
+
+:global(h3) {
+  font-size: clamp(1.5rem, 3vw, var(--font-size-3xl));
+  font-weight: 600;
+}
+
+:global(h4) {
+  font-size: clamp(1.25rem, 2.5vw, var(--font-size-2xl));
+  font-weight: 600;
+}
+
+:global(h5) {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+:global(h6) {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+/* Body Text - Editorial Style */
+:global(p) {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin: 0 0 1em 0;
+}
+
+:global(p:last-child) {
+  margin-bottom: 0;
+}
+
+/* Links - Editorial Style */
+:global(a) {
+  font-family: var(--font-accent);
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-primary);
+  text-underline-offset: 2px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+:global(a:hover) {
+  color: var(--ctp-sky);
+  text-decoration-color: var(--ctp-sky);
+}
+
+:global(a:visited) {
+  color: var(--accent-secondary);
+  text-decoration-color: var(--accent-secondary);
+}
+
+/* Strong and Emphasis */
+:global(strong),
+:global(b) {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+:global(em),
+:global(i) {
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Lists - Modern Style */
+:global(ul),
+:global(ol) {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: var(--line-height-relaxed);
+  padding-left: 1.5em;
+  margin: 0 0 1em 0;
+}
+
+:global(li) {
+  margin-bottom: 0.5em;
+}
+
+/* Code - Modern Style */
+:global(code) {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: 400;
+  background: var(--bg-surface-0);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  color: var(--ctp-mauve);
+}
+
+:global(pre) {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  background: var(--bg-surface-0);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+:global(pre code) {
+  background: transparent;
+  padding: 0;
+}
+
+/* Responsive Typography - Modern Style */
+@media (max-width: 768px) {
+  :global(h1) {
+    font-size: clamp(1.75rem, 6vw, var(--font-size-4xl));
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  :global(h2) {
+    font-size: clamp(1.5rem, 5vw, var(--font-size-3xl));
+  }
+
+  :global(h3) {
+    font-size: clamp(1.25rem, 4vw, var(--font-size-2xl));
+  }
+
+  :global(h4) {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* Poster Style for Gallery Title - Modern Elegant */
+.poster-title {
+  font-family: var(--font-heading-main);
+  font-size: clamp(2rem, 6vw, var(--font-size-6xl));
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  text-align: center;
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .poster-title {
+    font-size: clamp(1.5rem, 7vw, var(--font-size-4xl));
+  }
+}

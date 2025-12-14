@@ -1,0 +1,122 @@
+.gallery-container {
+  width: 100%;
+  max-width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.image-grid {
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Убираем min-width, чтобы не блокировать aspect-ratio Frame */
+.image-grid > * {
+  /* min-width убран - BalancedMasonryGrid сам управляет размерами */
+}
+
+.frame {
+  position: relative;
+  /* aspect-ratio устанавливается автоматически через CSS переменные --width и --height */
+  aspect-ratio: var(--width) / var(--height);
+  /* Важно: не устанавливаем width/height явно, чтобы не переопределить aspect-ratio */
+  /* width и height управляются BalancedMasonryGrid через grid-template-columns */
+}
+
+.image-item {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: var(--bg-surface-0);
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-item:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-crust);
+  color: var(--text-primary);
+  padding: 1rem;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  border-top: 2px solid var(--border-color);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.image-item:hover .image-caption {
+  opacity: 1;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+}
+
+.empty-state p {
+  margin: 0.5rem 0;
+}
+
+.empty-hint {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.load-more-trigger {
+  height: 1px;
+  width: 100%;
+}
+
+.stats {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  font-family: var(--font-body);
+  background: var(--bg-surface-0);
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+  margin-top: 2rem;
+}
+
+.stats strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .image-grid {
+    gap: 1rem;
+  }
+}

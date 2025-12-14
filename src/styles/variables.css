@@ -1,0 +1,55 @@
+:root {
+  /* Catppuccin Mocha - Accent Colors */
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
+
+  /* Catppuccin Mocha - Text Colors */
+  --ctp-text: #cdd6f4;
+  --ctp-subtext-1: #bac2de;
+  --ctp-subtext-0: #a6adc8;
+  --ctp-overlay-2: #9399b2;
+  --ctp-overlay-1: #7f849c;
+  --ctp-overlay-0: #6c7086;
+
+  /* Catppuccin Mocha - Surface Colors */
+  --ctp-surface-2: #585b70;
+  --ctp-surface-1: #45475a;
+  --ctp-surface-0: #313244;
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+
+  /* Semantic Color Variables */
+  --bg-base: var(--ctp-base);
+  --bg-mantle: var(--ctp-mantle);
+  --bg-crust: var(--ctp-crust);
+  --bg-surface-0: var(--ctp-surface-0);
+  --bg-surface-1: var(--ctp-surface-1);
+  --bg-surface-2: var(--ctp-surface-2);
+
+  --text-primary: var(--ctp-text);
+  --text-secondary: var(--ctp-subtext-1);
+  --text-tertiary: var(--ctp-subtext-0);
+  --text-muted: var(--ctp-overlay-1);
+
+  --accent-primary: var(--ctp-blue);
+  --accent-secondary: var(--ctp-mauve);
+  --accent-success: var(--ctp-green);
+  --accent-warning: var(--ctp-yellow);
+  --accent-error: var(--ctp-red);
+
+  --border-color: var(--ctp-surface-0);
+  --border-hover: var(--ctp-surface-1);
+}
