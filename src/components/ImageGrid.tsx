@@ -134,7 +134,7 @@ export default function ImageGrid() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -309,39 +309,38 @@ export default function ImageGrid() {
   // Вычисляем frameWidth на основе размера окна
   const frameWidth = useMemo(() => calculateFrameWidth(windowWidth), [windowWidth]);
 
-  const openImage = (index: number) => {
-    setSelectedImageIndex(index);
+  const visibleImages = images.filter(img => !img._error && img.url && img.height > 0 && img.width > 0);
+  
+  const openImage = (imageId: string) => {
+    setSelectedImageId(imageId);
     document.body.style.overflow = 'hidden';
   };
 
   const closeImage = () => {
-    setSelectedImageIndex(null);
+    setSelectedImageId(null);
     document.body.style.overflow = '';
   };
 
   const goToPrevious = useCallback(() => {
-    setSelectedImageIndex(prev => {
-      if (prev !== null && prev > 0) {
-        return prev - 1;
-      }
-      return prev;
-    });
-  }, []);
+    if (selectedImageId === null) return;
+    
+    const currentIndex = visibleImages.findIndex(img => img.id === selectedImageId);
+    if (currentIndex > 0) {
+      setSelectedImageId(visibleImages[currentIndex - 1].id);
+    }
+  }, [selectedImageId, visibleImages]);
 
   const goToNext = useCallback(() => {
-    setSelectedImageIndex(prev => {
-      if (prev !== null) {
-        const visibleImages = images.filter(img => !img._error && img.url && img.height > 0 && img.width > 0);
-        if (prev < visibleImages.length - 1) {
-          return prev + 1;
-        }
-      }
-      return prev;
-    });
-  }, [images]);
+    if (selectedImageId === null) return;
+    
+    const currentIndex = visibleImages.findIndex(img => img.id === selectedImageId);
+    if (currentIndex >= 0 && currentIndex < visibleImages.length - 1) {
+      setSelectedImageId(visibleImages[currentIndex + 1].id);
+    }
+  }, [selectedImageId, visibleImages]);
 
   useEffect(() => {
-    if (selectedImageIndex === null) return;
+    if (selectedImageId === null) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -355,10 +354,14 @@ export default function ImageGrid() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedImageIndex, goToPrevious, goToNext]);
+  }, [selectedImageId, goToPrevious, goToNext]);
 
-  const visibleImages = images.filter(img => !img._error && img.url && img.height > 0 && img.width > 0);
-  const selectedImage = selectedImageIndex !== null ? visibleImages[selectedImageIndex] : null;
+  const selectedImage = selectedImageId !== null 
+    ? visibleImages.find(img => img.id === selectedImageId) || null
+    : null;
+  const selectedImageIndex = selectedImage !== null
+    ? visibleImages.findIndex(img => img.id === selectedImageId)
+    : -1;
 
   return (
     <div className="gallery-container">
@@ -391,10 +394,7 @@ export default function ImageGrid() {
                 <div 
                   className="image-item"
                   onClick={() => {
-                    const visibleIndex = visibleImages.findIndex(img => img.id === image.id);
-                    if (visibleIndex !== -1) {
-                      openImage(visibleIndex);
-                    }
+                    openImage(image.id);
                   }}
                 >
                   <img
@@ -429,7 +429,7 @@ export default function ImageGrid() {
         </div>
       )}
 
-      {selectedImage && selectedImageIndex !== null && (
+      {selectedImage && selectedImageId !== null && (
         <div className="lightbox" onClick={closeImage}>
           <button className="lightbox-close" onClick={(e) => { e.stopPropagation(); closeImage(); }} aria-label="Закрыть">
             <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -448,7 +448,7 @@ export default function ImageGrid() {
                 </svg>
               </button>
             )}
-            {selectedImageIndex !== null && selectedImageIndex < visibleImages.length - 1 && (
+            {selectedImageIndex >= 0 && selectedImageIndex < visibleImages.length - 1 && (
               <button 
                 className="lightbox-nav lightbox-next" 
                 onClick={(e) => { e.stopPropagation(); goToNext(); }}
@@ -459,11 +459,27 @@ export default function ImageGrid() {
                 </svg>
               </button>
             )}
-            <img
-              src={selectedImage.url}
-              alt={selectedImage.caption || 'Gallery image'}
-              className="lightbox-image"
-            />
+            <div 
+              className="lightbox-image-wrapper"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const isLeftSide = clickX < width / 2;
+                
+                if (isLeftSide && selectedImageIndex > 0) {
+                  goToPrevious();
+                } else if (!isLeftSide && selectedImageIndex >= 0 && selectedImageIndex < visibleImages.length - 1) {
+                  goToNext();
+                }
+              }}
+            >
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.caption || 'Gallery image'}
+                className="lightbox-image"
+              />
+            </div>
             {selectedImage.caption && (
               <div className="lightbox-caption">{formatCaption(selectedImage.caption)}</div>
             )}
