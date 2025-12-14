@@ -152,12 +152,16 @@ async function syncIncremental() {
         })
         .sort((a, b) => b.date - a.date);
 
-      await mkdir(pathDirname(IMAGES_FILE), { recursive: true });
+      const dataDir = pathDirname(IMAGES_FILE);
+      console.log(`Creating directory: ${dataDir}`);
+      await mkdir(dataDir, { recursive: true });
+      console.log(`Directory created, writing file: ${IMAGES_FILE}`);
       await writeFile(
         IMAGES_FILE,
         JSON.stringify({ images: allImages, lastSync: Date.now() }, null, 2),
         'utf-8'
       );
+      console.log(`File written successfully: ${IMAGES_FILE}`);
 
       console.log(`Synced ${allImages.length} total images (${newCount} new, ${images.length - newCount} updated)`);
       console.log('Incremental sync completed successfully');

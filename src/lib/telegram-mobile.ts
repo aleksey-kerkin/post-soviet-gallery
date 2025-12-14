@@ -17,7 +17,7 @@ const MOBILE_DEVICES = {
 
 export async function getChannelImagesFromMobile(
   channelUsername: string,
-  limit: number = 100,
+  limit: number = 3000,
   device: MobileDevice = 'iPhone',
   stopAfterDate?: number,
   existingMessageIds?: Set<number>,
