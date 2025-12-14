@@ -431,34 +431,7 @@ export default function ImageGrid() {
 
       {selectedImage && selectedImageId !== null && (
         <div className="lightbox" onClick={closeImage}>
-          <button className="lightbox-close" onClick={(e) => { e.stopPropagation(); closeImage(); }} aria-label="Закрыть">
-            <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="512,76.8 435.2,0 256,179.2 76.8,0 0,76.8 179.2,256 0,435.2 76.8,512 256,332.8 435.2,512 512,435.2 332.8,256"></polygon>
-            </svg>
-          </button>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            {selectedImageIndex > 0 && (
-              <button 
-                className="lightbox-nav lightbox-prev" 
-                onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
-                aria-label="Предыдущее изображение"
-              >
-                <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                  <polygon points="513,216.6 158.5,216.6 316.1,59.1 197.9,59.1 1,256 197.9,452.9 316.1,452.9 158.5,295.4 513,295.4"></polygon>
-                </svg>
-              </button>
-            )}
-            {selectedImageIndex >= 0 && selectedImageIndex < visibleImages.length - 1 && (
-              <button 
-                className="lightbox-nav lightbox-next" 
-                onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                aria-label="Следующее изображение"
-              >
-                <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                  <polygon points="315.1,48.6 196.9,48.6 354.5,206.1 0,206.1 0,284.9 354.5,284.9 196.9,442.4 315.1,442.4 512,245.5"></polygon>
-                </svg>
-              </button>
-            )}
             <div 
               className="lightbox-image-wrapper"
               onClick={(e) => {
