@@ -1,9 +1,39 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BalancedMasonryGrid, Frame } from '@masonry-grid/react';
 import type { TelegramImage, ImagesResponse } from '../types/image';
 import './ImageGrid.css';
 
 const LIMIT = 20;
+
+function formatCaption(caption: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const regex = /@([a-zA-Z0-9_]+)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(caption)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(caption.substring(lastIndex, match.index));
+    }
+    parts.push(
+      <a
+        key={match.index}
+        href={`https://t.me/${match[1]}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        @{match[1]}
+      </a>
+    );
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < caption.length) {
+    parts.push(caption.substring(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [caption];
+}
 
 function preloadImageDimensions(url: string): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
@@ -310,7 +340,7 @@ export default function ImageGrid() {
                     onLoad={(e) => handleImageLoad(image, e)}
                   />
                   {image.caption && (
-                    <div className="image-caption">{image.caption}</div>
+                    <div className="image-caption">{formatCaption(image.caption)}</div>
                   )}
                 </div>
               </Frame>

@@ -13,6 +13,10 @@
 
   const LIMIT = 20;
 
+  function formatCaption(caption: string): string {
+    return caption.replace(/@([a-zA-Z0-9_]+)/g, '<a href="https://t.me/$1" target="_blank" rel="noopener noreferrer">@$1</a>');
+  }
+
   function getFrameDimensions(w: number, h: number): { width: number; height: number } {
     const max = Math.max(w, h);
     const divisor = max > 1000 ? 100 : (max > 100 ? 10 : 1);
@@ -182,7 +186,7 @@
                 }}
               />
               {#if image.caption}
-                <div class="image-caption">{image.caption}</div>
+                <div class="image-caption">{@html formatCaption(image.caption)}</div>
               {/if}
             </div>
           </Frame>
@@ -269,6 +273,16 @@
     border-top: 2px solid var(--border-color);
     opacity: 0;
     transition: opacity 0.2s ease;
+  }
+
+  .image-caption :global(a) {
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+  }
+
+  .image-caption :global(a:hover) {
+    text-decoration: underline;
   }
 
   .image-item:hover .image-caption {

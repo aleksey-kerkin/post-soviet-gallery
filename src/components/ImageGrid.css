@@ -69,6 +69,16 @@
   opacity: 1;
 }
 
+.image-caption a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.image-caption a:hover {
+  text-decoration: underline;
+}
+
 .loading {
   text-align: center;
   padding: 2rem;
