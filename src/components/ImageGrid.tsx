@@ -134,6 +134,7 @@ export default function ImageGrid() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -233,6 +234,12 @@ export default function ImageGrid() {
     loadImages(1);
   }, [loadImages]);
 
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   // Отслеживание размера окна для адаптивного frameWidth
   useEffect(() => {
     const handleResize = () => {
@@ -302,6 +309,57 @@ export default function ImageGrid() {
   // Вычисляем frameWidth на основе размера окна
   const frameWidth = useMemo(() => calculateFrameWidth(windowWidth), [windowWidth]);
 
+  const openImage = (index: number) => {
+    setSelectedImageIndex(index);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeImage = () => {
+    setSelectedImageIndex(null);
+    document.body.style.overflow = '';
+  };
+
+  const goToPrevious = useCallback(() => {
+    setSelectedImageIndex(prev => {
+      if (prev !== null && prev > 0) {
+        return prev - 1;
+      }
+      return prev;
+    });
+  }, []);
+
+  const goToNext = useCallback(() => {
+    setSelectedImageIndex(prev => {
+      if (prev !== null) {
+        const visibleImages = images.filter(img => !img._error && img.url && img.height > 0 && img.width > 0);
+        if (prev < visibleImages.length - 1) {
+          return prev + 1;
+        }
+      }
+      return prev;
+    });
+  }, [images]);
+
+  useEffect(() => {
+    if (selectedImageIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeImage();
+      } else if (e.key === 'ArrowLeft') {
+        goToPrevious();
+      } else if (e.key === 'ArrowRight') {
+        goToNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex, goToPrevious, goToNext]);
+
+  const visibleImages = images.filter(img => !img._error && img.url && img.height > 0 && img.width > 0);
+  const selectedImage = selectedImageIndex !== null ? visibleImages[selectedImageIndex] : null;
+
   return (
     <div className="gallery-container">
       {images.length === 0 && !loading ? (
@@ -330,7 +388,15 @@ export default function ImageGrid() {
                 className="frame"
                 style={{ '--width': frameWidth, '--height': frameHeight } as React.CSSProperties}
               >
-                <div className="image-item">
+                <div 
+                  className="image-item"
+                  onClick={() => {
+                    const visibleIndex = visibleImages.findIndex(img => img.id === image.id);
+                    if (visibleIndex !== -1) {
+                      openImage(visibleIndex);
+                    }
+                  }}
+                >
                   <img
                     src={image.thumbnailUrl || image.url}
                     alt={image.caption || 'Gallery image'}
@@ -360,6 +426,48 @@ export default function ImageGrid() {
       {!hasMore && images.length > 0 && (
         <div className="stats">
           Загружено <strong>{images.length}</strong> из <strong>{total}</strong> изображений
+        </div>
+      )}
+
+      {selectedImage && selectedImageIndex !== null && (
+        <div className="lightbox" onClick={closeImage}>
+          <button className="lightbox-close" onClick={(e) => { e.stopPropagation(); closeImage(); }} aria-label="Закрыть">
+            <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="512,76.8 435.2,0 256,179.2 76.8,0 0,76.8 179.2,256 0,435.2 76.8,512 256,332.8 435.2,512 512,435.2 332.8,256"></polygon>
+            </svg>
+          </button>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            {selectedImageIndex > 0 && (
+              <button 
+                className="lightbox-nav lightbox-prev" 
+                onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+                aria-label="Предыдущее изображение"
+              >
+                <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <polygon points="513,216.6 158.5,216.6 316.1,59.1 197.9,59.1 1,256 197.9,452.9 316.1,452.9 158.5,295.4 513,295.4"></polygon>
+                </svg>
+              </button>
+            )}
+            {selectedImageIndex !== null && selectedImageIndex < visibleImages.length - 1 && (
+              <button 
+                className="lightbox-nav lightbox-next" 
+                onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                aria-label="Следующее изображение"
+              >
+                <svg fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <polygon points="315.1,48.6 196.9,48.6 354.5,206.1 0,206.1 0,284.9 354.5,284.9 196.9,442.4 315.1,442.4 512,245.5"></polygon>
+                </svg>
+              </button>
+            )}
+            <img
+              src={selectedImage.url}
+              alt={selectedImage.caption || 'Gallery image'}
+              className="lightbox-image"
+            />
+            {selectedImage.caption && (
+              <div className="lightbox-caption">{formatCaption(selectedImage.caption)}</div>
+            )}
+          </div>
         </div>
       )}
     </div>
