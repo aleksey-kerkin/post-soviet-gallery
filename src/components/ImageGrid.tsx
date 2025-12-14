@@ -157,36 +157,13 @@ export default function ImageGrid() {
       
       const data: ImagesResponse = await response.json();
       
-      // Предзагружаем только изображения без высоты для получения реальных размеров
-      const imagesToPreload = data.images.filter(img => !img.height || img.height === 0);
-      const preloadResults = await Promise.allSettled(
-        imagesToPreload.map(async (img) => {
-          const dimensions = await preloadImageDimensions(img.url);
-          return { id: img.id, ...dimensions };
-        })
-      );
-      
-      // Создаем Map для быстрого доступа к предзагруженным размерам
-      const preloadedDimensions = new Map<string, { width: number; height: number }>();
-      preloadResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          preloadedDimensions.set(imagesToPreload[index].id, result.value);
-        } else {
-          console.warn(`Failed to preload image ${imagesToPreload[index].id}:`, result.reason);
-        }
-      });
-      
-      // Обрабатываем все изображения
+      // Обрабатываем все изображения сразу, используя данные из JSON
+      // Размеры будут обновлены при загрузке изображения через handleImageLoad
       const processedImages = data.images.map((img) => {
         const processed = { ...img };
         
-        // Используем предзагруженные размеры, если доступны
-        const preloaded = preloadedDimensions.get(processed.id);
-        if (preloaded) {
-          processed.width = preloaded.width;
-          processed.height = preloaded.height;
-        } else if (!processed.height || processed.height === 0) {
-          // Fallback на приблизительные значения
+        // Если размеры отсутствуют, используем приблизительные значения для быстрого отображения
+        if (!processed.height || processed.height === 0) {
           if (processed.width > 600) {
             processed.height = Math.round(processed.width * 0.75);
           } else if (processed.width > 0) {
@@ -197,7 +174,6 @@ export default function ImageGrid() {
           }
         }
         
-        // Проверяем ширину
         if (!processed.width || processed.width === 0) {
           if (processed.height > 0) {
             processed.width = Math.round(processed.height * 0.75);
@@ -212,6 +188,30 @@ export default function ImageGrid() {
         processed._frameHeight = dims.height;
         return processed;
       });
+      
+      // Асинхронно предзагружаем размеры для изображений без размеров (в фоне, не блокируя отображение)
+      const imagesToPreload = data.images.filter(img => !img.height || img.height === 0);
+      if (imagesToPreload.length > 0) {
+        Promise.allSettled(
+          imagesToPreload.map(async (img) => {
+            try {
+              const dimensions = await preloadImageDimensions(img.url);
+              setImages(prev => prev.map(prevImg => {
+                if (prevImg.id === img.id && (prevImg.height === 0 || !prevImg.height)) {
+                  const updated = { ...prevImg, width: dimensions.width, height: dimensions.height };
+                  const dims = getFrameDimensions(updated.width, updated.height);
+                  updated._frameWidth = dims.width;
+                  updated._frameHeight = dims.height;
+                  return updated;
+                }
+                return prevImg;
+              }));
+            } catch (error) {
+              // Игнорируем ошибки предзагрузки
+            }
+          })
+        );
+      }
       
       setImages(prev => {
         if (pageNum === 1) {
@@ -422,6 +422,11 @@ export default function ImageGrid() {
                     alt={image.caption || 'Gallery image'}
                     loading="lazy"
                     decoding="async"
+                    style={{
+                      aspectRatio: image.width > 0 && image.height > 0 
+                        ? `${image.width} / ${image.height}` 
+                        : undefined
+                    }}
                     onError={() => handleImageError(image)}
                     onLoad={(e) => handleImageLoad(image, e)}
                   />
