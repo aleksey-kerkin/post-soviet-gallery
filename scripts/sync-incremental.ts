@@ -42,6 +42,9 @@ async function syncIncremental() {
   try {
     console.log(`Fetching new images from @${CHANNEL_USERNAME} via mobile parsing...`);
     
+    // Ensure data directory exists
+    await mkdir(pathDirname(IMAGES_FILE), { recursive: true });
+    
     let lastSyncDate: number | undefined;
     let existingImages: any[] = [];
     
