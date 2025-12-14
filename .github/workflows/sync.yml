@@ -13,6 +13,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Полное клонирование для получения всех файлов
+
+      - name: Verify data/images.json exists
+        run: |
+          if [ -f "data/images.json" ]; then
+            echo "✓ data/images.json found"
+            ls -lh data/images.json
+          else
+            echo "✗ data/images.json not found, will be created"
+            mkdir -p data
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
