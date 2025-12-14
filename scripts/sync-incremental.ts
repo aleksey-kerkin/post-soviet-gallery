@@ -1,6 +1,6 @@
 import { getChannelImagesFromMobile } from '../src/lib/telegram-mobile.js';
-import { writeFile, readFile } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, readFile, mkdir } from 'fs/promises';
+import { join, dirname as pathDirname } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { spawn } from 'child_process';
@@ -149,6 +149,7 @@ async function syncIncremental() {
         })
         .sort((a, b) => b.date - a.date);
 
+      await mkdir(pathDirname(IMAGES_FILE), { recursive: true });
       await writeFile(
         IMAGES_FILE,
         JSON.stringify({ images: allImages, lastSync: Date.now() }, null, 2),

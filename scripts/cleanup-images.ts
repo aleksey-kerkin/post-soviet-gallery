@@ -1,5 +1,5 @@
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile, writeFile, mkdir } from 'fs/promises';
+import { join, dirname as pathDirname } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -32,7 +32,16 @@ function isLogoOrIcon(img: any): boolean {
 async function cleanupImages() {
   try {
     console.log('Reading images file...');
-    const existingDataContent = await readFile(IMAGES_FILE, 'utf-8');
+    let existingDataContent: string;
+    try {
+      existingDataContent = await readFile(IMAGES_FILE, 'utf-8');
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        console.log('Images file does not exist yet, skipping cleanup');
+        return;
+      }
+      throw error;
+    }
     const existingData = JSON.parse(existingDataContent);
     const existingImages: any[] = existingData.images || [];
     
@@ -114,6 +123,7 @@ async function cleanupImages() {
     console.log(`Cleaned: ${existingImages.length} -> ${sortedImages.length} images`);
     console.log(`Removed: ${existingImages.length - sortedImages.length} duplicates and logos`);
 
+    await mkdir(pathDirname(IMAGES_FILE), { recursive: true });
     await writeFile(
       IMAGES_FILE,
       JSON.stringify({ images: sortedImages, lastSync: existingData.lastSync || Date.now() }, null, 2),
