@@ -135,6 +135,7 @@ export default function ImageGrid() {
   const [total, setTotal] = useState(0);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [pendingNextImage, setPendingNextImage] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -334,10 +335,15 @@ export default function ImageGrid() {
     if (selectedImageId === null) return;
     
     const currentIndex = visibleImages.findIndex(img => img.id === selectedImageId);
-    if (currentIndex >= 0 && currentIndex < visibleImages.length - 1) {
+    
+    // Если достигли последнего изображения и есть еще страницы, загружаем следующую
+    if (currentIndex >= 0 && currentIndex === visibleImages.length - 1 && hasMore && !loading) {
+      setPendingNextImage(true);
+      loadImages(page + 1);
+    } else if (currentIndex >= 0 && currentIndex < visibleImages.length - 1) {
       setSelectedImageId(visibleImages[currentIndex + 1].id);
     }
-  }, [selectedImageId, visibleImages]);
+  }, [selectedImageId, visibleImages, hasMore, loading, page, loadImages]);
 
   useEffect(() => {
     if (selectedImageId === null) return;
@@ -355,6 +361,20 @@ export default function ImageGrid() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImageId, goToPrevious, goToNext]);
+
+  // Автоматический переход к следующему изображению после загрузки новой страницы
+  useEffect(() => {
+    if (pendingNextImage && selectedImageId !== null && !loading) {
+      const currentIndex = visibleImages.findIndex(img => img.id === selectedImageId);
+      if (currentIndex >= 0 && currentIndex < visibleImages.length - 1) {
+        setSelectedImageId(visibleImages[currentIndex + 1].id);
+        setPendingNextImage(false);
+      } else if (!hasMore || currentIndex === visibleImages.length - 1) {
+        // Если нет больше изображений или мы все еще на последнем, сбрасываем флаг
+        setPendingNextImage(false);
+      }
+    }
+  }, [pendingNextImage, selectedImageId, visibleImages, loading, hasMore]);
 
   const selectedImage = selectedImageId !== null 
     ? visibleImages.find(img => img.id === selectedImageId) || null
@@ -442,7 +462,7 @@ export default function ImageGrid() {
                 
                 if (isLeftSide && selectedImageIndex > 0) {
                   goToPrevious();
-                } else if (!isLeftSide && selectedImageIndex >= 0 && selectedImageIndex < visibleImages.length - 1) {
+                } else if (!isLeftSide) {
                   goToNext();
                 }
               }}
