@@ -2,7 +2,7 @@ name: Sync Images
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Каждый день в 2:00 UTC (5:00 МСК)
+    - cron: '0 0,12 * * *'  # Каждые 12 часов в 0:00 и 12:00 UTC (3:00 и 15:00 МСК)
   workflow_dispatch:  # Ручной запуск
 
 jobs:
