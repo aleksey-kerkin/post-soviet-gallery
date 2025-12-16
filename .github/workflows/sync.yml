@@ -2,7 +2,7 @@ name: Sync Images
 
 on:
   schedule:
-    - cron: '0 0,12 * * *'  # Каждые 12 часов в 0:00 и 12:00 UTC (3:00 и 15:00 МСК)
+    - cron: '0 0,6,12,18 * * *'  # Каждые 6 часов в 0:00, 6:00, 12:00 и 18:00 UTC (3:00, 9:00, 15:00 и 21:00 МСК)
   workflow_dispatch:  # Ручной запуск
 
 jobs:
@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Update repository
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git pull --rebase origin main
+
       - name: Run incremental sync
         run: npm run sync-incremental
         env:
@@ -42,10 +48,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git pull --rebase origin main
-          git add data/images.json
+          git add -f data/images.json
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
